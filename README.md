@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-npx skills add <你的GitHub用户名>/skills
+npx skills add ChaoqiYin/skills
 ```
 
 安装器会让你挑选要装哪些技能、装到哪个 agent 上。
@@ -13,13 +13,13 @@ npx skills add <你的GitHub用户名>/skills
 先看看有哪些：
 
 ```bash
-npx skills add <你的GitHub用户名>/skills --list
+npx skills add ChaoqiYin/skills --list
 ```
 
 只装某一个：
 
 ```bash
-npx skills add <你的GitHub用户名>/skills --skill=<技能名>
+npx skills add ChaoqiYin/skills --skill=<技能名>
 ```
 
 更新：

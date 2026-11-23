@@ -32,7 +32,7 @@ npx skills update <技能名>
 
 ### engineering
 
-- [setup-issue-tracker](./skills/engineering/setup-issue-tracker/SKILL.md) — 给 GitHub / GitLab / 本地 markdown 之外的 issue tracker 提供 setup 模板（当前：CNB）
+- [lark-issue-tracker](./skills/engineering/lark-issue-tracker/SKILL.md)：用飞书多维表格管理需求、任务状态、依赖和评论协作。
 
 ## 仓库结构
 

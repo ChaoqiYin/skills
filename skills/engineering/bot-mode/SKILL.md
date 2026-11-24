@@ -18,6 +18,13 @@ Work in the actual project identified by the request and active context. Keep it
 3. Distinguish advice, investigation, planning, review, and execution. Keep plan-only and review-only work within those deliverables. Proceed through implementation and verification when requested. Route setup to `setup-bot` and skill-selection questions to `bot-help`. Suggest setup only when missing configuration affects the task.
 4. Select the closest playbook. For substantial work, track phases with a task-list tool or written checklist. Handle a small, obvious change directly.
 5. Define the acceptance check before changing anything. Read the relevant principle skills and selected helpers. Execute the playbook.
+6. Before the first write, record an execution contract:
+   - Task class and deliverable.
+   - Acceptance check and the evidence that will prove it.
+   - Explicit non-goals.
+   - Delegation plan: which independent scopes are delegated, or why solo work is sufficient.
+   - Helper availability; name any unavailable helper.
+   Do not enter Implementation until this contract exists.
 
 Follow the user's language and scope, project instructions, and higher-priority rules. Keep existing tool restrictions and authorization boundaries. Apply this skill to the active task. Do not claim persistent activation or carry an old task into a clearly new request.
 

@@ -10,7 +10,7 @@ When the task matches no playbook, design one. The deliverable before any code i
 
 ## Start
 
-Open a todolist whose first item is to read the Principles section of the **poteto-mode** skill. Then add the phases below as todos.
+Open a task list with the available tool or a written checklist. Its first item is to locate `bot-mode` by name through the current environment's skill catalog or discovery metadata and read its Principles section. Resolve other skill dependencies by name in the same way; report a required dependency that cannot be located. Then add the phases below.
 
 ## Phase A: Frame
 

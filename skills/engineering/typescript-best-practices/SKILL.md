@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # TypeScript best practices
 
-Apply the **type-system-discipline** principle skill first.
+Locate `principle-type-system-discipline` by name through the current environment's skill catalog or discovery metadata and apply it first. Report an unavailable dependency instead of constructing a sibling-directory path.
 
 | Rule | Summary |
 |------|---------|

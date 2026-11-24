@@ -110,6 +110,17 @@ Give independent workers separate conversations. Respect concurrency limits and 
 
 If delegation is unavailable, ordinary work can continue directly with that limitation reported. Preserve the minimum requirements of a requested `arena`, `swarm`, or independent review. Report incomplete work when those requirements cannot be met. Do not simulate independence in one conversation.
 
+### Delegation gate
+Substantial work is any change spanning 3+ files, crossing server/client boundaries,
+or adding an API contract, configuration, or external integration. Before editing it requires:
+- one independent pass for domain/data model and one for UI/integration points,
+  or a written justification that a single pass covers both;
+- an independent design review when interfaces or ownership are unresolved;
+- a brief and returned evidence for every worker.
+
+When a named helper is unavailable, substitute a general-purpose agent for the same
+independent scope and report the substitution. Never silently downgrade to solo work.
+
 ## Evidence and finish
 
 For configured Feishu work, combine the task playbook with the relevant technical playbook. Assign one writer for shared task state and comments, normally the coordinator. Workers return proposed updates and evidence. Keep code delivery status separate from task acceptance. A commit, merge, or worker `PASS` does not mean the task is accepted.

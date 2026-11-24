@@ -17,14 +17,8 @@ Work in the actual project identified by the request and active context. Keep it
 2. Read referenced domain documents and configuration. Setup-bot defaults to `docs/agents/domain.md` and `docs/agents/issue-tracker.md`. Follow the project's actual paths. Read the relevant glossary and architecture decision records as directed. Resolve the tracker from configuration. Discover tools and verification commands from the project. Continue without setup when available information is sufficient.
 3. Distinguish advice, investigation, planning, review, and execution. Keep plan-only and review-only work within those deliverables. Proceed through implementation and verification when requested. Route setup to `setup-bot` and skill-selection questions to `bot-help`. Suggest setup only when missing configuration affects the task.
 4. Select the closest playbook. For substantial work, track phases with a task-list tool or written checklist. Handle a small, obvious change directly.
-5. Define the acceptance check before changing anything. Read the relevant principle skills and selected helpers. Execute the playbook.
-6. Before the first write, record an execution contract:
-   - Task class and deliverable.
-   - Acceptance check and the evidence that will prove it.
-   - Explicit non-goals.
-   - Delegation plan: which independent scopes are delegated, or why solo work is sufficient.
-   - Helper availability; name any unavailable helper.
-   Do not enter Implementation until this contract exists.
+5. Before implementation, record the task class, authorized scope, deliverable, acceptance check, and required evidence. State whether the independent-design gate below applies, citing the actual design decisions or the user's requirement. Report unavailable capabilities needed by the chosen workflow. Use the phase checklist or a short in-chat record; a separate file is optional.
+6. Read the relevant principle skills and selected helpers. Satisfy required design and review steps before implementation. A delegation plan alone does not satisfy them. Execute the playbook within the recorded scope.
 
 Follow the user's language and scope, project instructions, and higher-priority rules. Keep existing tool restrictions and authorization boundaries. Apply this skill to the active task. Do not claim persistent activation or carry an old task into a clearly new request.
 
@@ -102,24 +96,38 @@ Keep verification boundaries explicit. An expected failing TDD test or incomplet
 
 ## Subagents
 
-Delegate when independent evidence, separate coverage, or isolated implementation units help. The current agent divides work and creates subagents using available tools and environment defaults. Do not require user-selected models, model configuration, or model-identity records.
+Apply the independent-design gate below before implementation. Outside required delegation, delegate when independent evidence, separate coverage, or isolated implementation units help. Create subagents using available tools and environment defaults. Do not require user-selected models, model configuration, or model-identity records.
 
 Use the brief and reporting contract in [worker.md](worker.md). Supply its resolved path and the task-specific inputs. Ensure workers can read relevant project documents, or provide the required contents. A worker cannot expand authorization or override higher-priority instructions.
 
 Give independent workers separate conversations. Respect concurrency limits and use batches when needed. Isolate writers in separate worktrees or directories. Branches alone do not isolate a shared checkout. If isolation is unavailable, collect proposals with one writer or work sequentially. Review worker artifacts and verify the integrated result.
 
-If delegation is unavailable, ordinary work can continue directly with that limitation reported. Preserve the minimum requirements of a requested `arena`, `swarm`, or independent review. Report incomplete work when those requirements cannot be met. Do not simulate independence in one conversation.
+### Independent-design gate
 
-### Delegation gate
-Substantial work is any change spanning 3+ files, crossing server/client boundaries,
-or adding an API contract, configuration, or external integration. Before editing it requires:
-- one independent pass for domain/data model and one for UI/integration points,
-  or a written justification that a single pass covers both;
-- an independent design review when interfaces or ownership are unresolved;
-- a brief and returned evidence for every worker.
+Require at least two independent candidate subagents when either condition holds:
 
-When a named helper is unavailable, substitute a general-purpose agent for the same
-independent scope and report the substitution. Never silently downgrade to solo work.
+- The user explicitly requests multiple independent designs or independently generated candidates for comparison. Follow any higher requested count and any specified workflow. An explicit request for another kind of delegation still requires that delegation within its requested scope.
+- Implementation requires a design decision about a new or changed cross-module contract, state ownership, permission boundary, or external integration. Also apply the gate to unresolved choices that materially affect module boundaries, the data model, or the user flow.
+
+Mechanical changes and small fixes within established project patterns can proceed directly when neither condition applies. File count, estimated effort, confidence, and a written justification cannot exempt a task that meets a condition. Advice and review remain within their requested deliverables. Architectural subject matter or comparison of already supplied designs alone does not authorize implementation or require new design candidates.
+
+Before the first implementation edit, complete this sequence:
+
+1. Give each candidate the same goal, project facts, constraints, and acceptance criteria in a separate conversation. Assign the complete core design problem, not separate frontend and backend slices. Use [worker.md](worker.md) for the design artifact contract. Candidates must not receive or read each other's first artifacts before returning their own. Check inherited context as well as explicit briefs. Use a fresh conversation without inherited candidate results when necessary; a new worker identifier alone does not establish independence.
+2. Receive at least two complete candidate artifacts. Launching workers, pending results, coordinator-written alternatives, and divided coverage do not meet this requirement. Replace or retry failed candidates. If the required count cannot be reached, report the unmet gate and leave affected implementation blocked.
+3. Read every completed candidate. Compare the candidates against the acceptance criteria and record the chosen base, adopted ideas, and rejected tradeoffs. Agreement is valid; do not manufacture differences. Show the worker identifiers, artifact paths or returned-result references, and the decision before implementation.
+
+For an explicitly requested design or comparison without implementation, complete this sequence before finalizing that deliverable. Do not use the absence of implementation edits to skip requested independent work.
+
+Use `arena` for its full candidate-comparison workflow when applicable and permitted. An additional independent judge or adversarial review depends on the task's risk or explicit request. Coverage workers and implementation workers do not replace complete independent designs.
+
+Reading, baseline checks, task records, and isolated design artifacts may precede the gate. They remain subject to existing authorization. Do not start implementation while waiting for designs. If scope expands or a material design premise changes, pause affected implementation edits and satisfy the gate for the new scope. Preserve existing work and review it against the selected design; do not automatically roll it back or count it as design evidence.
+
+### Unavailable capabilities
+
+Distinguish a missing helper skill, restricted invocation, and unavailable subagent tools. If an optional helper is missing but delegation is available, follow the gate and worker contract directly and report the substitution. Do not claim to have executed the missing helper. Preserve the full contract of an explicitly requested skill; report an unmet requirement when it cannot be fulfilled.
+
+Respect concurrency limits. Independent conversations may run in batches or sequentially. If required delegation is unavailable or prohibited, continue possible investigation, baseline checks, and acceptance preparation. Report the capability gap and stop before affected implementation. Do not silently downgrade to solo work or simulate independence. The coordinator's justification cannot waive required delegation; only a changed user instruction or a higher-priority rule can change the applicable requirement. Work that does not require delegation can continue directly.
 
 ## Evidence and finish
 
@@ -131,4 +139,4 @@ Access conversation history through the environment's supported session interfac
 
 Stop when the deliverable passes its checks, the user stops the run, an agreed limit is reached, or a concrete prerequisite blocks progress. Finish authorized preparation before requesting missing permission. Do not ask again for existing authorization. A request to work autonomously does not authorize messages, publication, deployment, or merging.
 
-Lead the final reply with the outcome. Describe the change or finding, supporting evidence, and remaining limitations. Follow the user's language and project output conventions.
+Lead the final reply with the outcome. Describe the change or finding, supporting evidence, and remaining limitations. For required delegation, report the actual workers, covered scope, candidate artifacts, decision, and any missing results or capabilities. A claim that delegation occurred is not evidence without real worker results. Follow the user's language and project output conventions.

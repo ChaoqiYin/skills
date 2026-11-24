@@ -22,6 +22,17 @@ For Feishu tasks, use the record snapshot and acceptance criteria in the brief. 
 
 Run the acceptance check when possible. Preserve evidence where the coordinator can read it. Report blocked checks without marking them passed. Commit, publish, merge, send messages, or create further workers only when the brief and applicable instructions authorize the action.
 
+## Independent design candidates
+
+When assigned a candidate design, cover the complete core problem using the shared goal, project facts, constraints, and acceptance criteria. Return a concrete design with:
+
+- Data and state ownership, interface contracts, and module boundaries.
+- Important failure states and recovery behavior.
+- A verification method tied to the requested behavior.
+- Alternatives considered and the reasons for the proposed tradeoffs.
+
+Use a separate conversation. Do not receive or read other candidates' first artifacts before returning your own. If inherited context already contains another candidate's result, report the contamination; that attempt cannot count as an independent candidate. Record your worker identifier, input revision or supplied snapshot, and artifact path or returned-result reference. Return the complete design, including known gaps. A progress note or a partial frontend or backend investigation is not a complete candidate. Do not implement the design unless a later brief authorizes implementation after the coordinator's comparison.
+
 ## Return
 
 Return `PASS`, `ISSUES`, or `BLOCKED`. Include the result, artifact paths, checks run, observations, unresolved gaps, and task-owned processes or temporary resources still active. Record the input revision and measurement method when the brief specifies them.

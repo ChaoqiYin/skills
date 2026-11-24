@@ -5,7 +5,7 @@ Use for requested changes. Keep one checkable goal through diagnosis, implementa
 ## Frame and choose the evidence
 
 1. Read the relevant code and project instructions. Record existing user changes. Capture a baseline for checks that require comparison.
-2. Define the acceptance check from the requested behavior. Choose the relevant approach below. Combine approaches only when needed.
+2. Define the acceptance check from the requested behavior. Apply the [independent-design gate](../SKILL.md#independent-design-gate) and record the execution scope before implementation. Choose the relevant approach below. Combine approaches only when needed.
 
 | Change | Approach |
 |---|---|
@@ -17,7 +17,7 @@ Use for requested changes. Keep one checkable goal through diagnosis, implementa
 
 ## Execute and integrate
 
-3. Implement in verifiable units. Use [Prototype](prototype.md) for an unresolved technical choice. Consider `arena` for competing artifacts or `swarm` for separable work. Follow their contracts. Delegate only when it helps the task.
+3. Complete required independent designs and comparison before the first implementation edit. Implement in verifiable units. Use [Prototype](prototype.md) for unresolved technical uncertainty. Delegate separable coverage or implementation work when useful, after satisfying the required design gate. Follow each selected helper's contract. Recheck the gate when scope or design premises change.
 4. Inspect each change and run its check before advancing beyond the declared boundary. Distinguish expected intermediate failures, baseline failures, and regressions. Fix regressions without weakening checks.
 5. Verify the integrated result against the requested behavior. A successful build confirms compilation. Runtime claims need runtime evidence. Use project checks and add tests that provide meaningful regression protection.
 6. Return the change, evidence, and remaining gaps. Use [Delivery](delivery.md) only for requested or already authorized delivery actions.

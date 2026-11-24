@@ -11,14 +11,15 @@ Give each worker these inputs:
 - The output path or isolated checkout, with permitted edits, processes, and external actions.
 - The acceptance check, required evidence, and resolved paths of relevant skills.
 - Dependencies on other results and the stopping condition.
+- Routine decisions the worker may make, retry limits, and conditions that require escalation to the coordinator.
 
-Resolve missing facts from available context. Report an ambiguity that affects the task. Do not invent permission or change another worker's scope.
+Resolve missing facts and routine implementation choices from available context. Proceed within the assigned scope without asking the user whether to continue. Return genuine blockers to the coordinator with evidence, attempts, a recommended next action, and release conditions. The coordinator owns questions to business decision-makers. Do not invent permission or change another worker's scope.
 
 ## Work
 
 Read the supplied project instructions and relevant documents before acting. Use their resolved paths or supplied contents. Do not assume the coordinator's context is inherited. Follow higher-priority instructions and stay within the writable area. For a review-only task, leave the target unchanged and put permitted reproductions in isolated scratch space.
 
-For Feishu tasks, use the record snapshot and acceptance criteria in the brief. Return progress, blocker questions, and evidence. The coordinator writes shared fields and comments unless the brief assigns that responsibility to this worker. A record link or credential does not authorize comments, mentions, or status changes.
+For Feishu tasks, use the record snapshot and acceptance criteria in the brief. Return progress, blocker questions, and evidence. The coordinator writes shared fields and comments unless the brief assigns that responsibility to this worker. Use `lark-issue-tracker`'s bot-only command wrapper for any assigned task operations. A record link or credential does not authorize comments, mentions, or status changes. If assigned to publish a blocker, save the question and task state, then end the run without waiting for a reply.
 
 Run the acceptance check when possible. Preserve evidence where the coordinator can read it. Report blocked checks without marking them passed. Commit, publish, merge, send messages, or create further workers only when the brief and applicable instructions authorize the action.
 

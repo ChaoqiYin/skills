@@ -4,71 +4,107 @@ description: Manage requirements and issues in Feishu Base. Use when creating or
 disable-model-invocation: true
 ---
 
-# 用飞书多维表格管理任务
+# Manage Feishu task records
 
-用一张任务表承载需求。将已有计划写入飞书。
+Use the project's existing Base task table. Keep requirements, current state, and execution history in its records. Use record comments for discussions. Do not switch to native Feishu todos or create another tracker.
 
-## 选择飞书能力
+## Resolve the task and capabilities
 
-按操作查阅对应技能，调用细节遵循该技能：
+Read the actual project instructions and task configuration. `setup-bot` defaults to `docs/agents/issue-tracker.md`; follow the project's actual path. Resolve the task from the supplied link or configured table and record. A display task number is not a resource ID.
 
-- 定位多维表格、查询和更新任务、获取记录链接、查看修改历史：读取 `lark-base`。
-- 读取、发布和回复记录评论，提及负责人：读取 `lark-drive`。
-- 按姓名确定被提及人员：读取 `lark-contact`。
+Read helper skills through the current catalog before using them:
 
-从用户链接或项目配置定位任务表与记录。目标缺失或无法唯一确定时，询问用户。写入前确认现有字段和状态选项。这些任务使用多维表格记录管理，不使用飞书原生待办。
+- `lark-base` for table resolution, records, fields, dependencies, and history.
+- `lark-drive` for anchored record comments, replies, and person mentions.
+- `lark-contact` for bot-supported lookups of known person identifiers.
+- `lark-shared` for CLI identity, output, permission errors, and confirmation gates.
 
-读取实际项目指令及其引用的任务配置；`setup-bot` 默认写入 `docs/agents/issue-tracker.md`，已有配置以项目实际路径为准。配置可以只保存飞书任务表链接；按需从服务读取表、评论视图、字段、状态及当前操作身份，复用已配置的必要覆盖值。用户提供的任务链接可用于本次操作。配置中的资源标识不替代对实际目标的核对，也不代表写入授权。需要配置默认绑定时按名称定位 `setup-bot`；不要自动建表或改用其他任务系统。
+Report unavailable dependencies. Do not assume another skill's directory from the source repository layout. Resolve this skill's own scripts relative to this file.
 
-配置、登录、身份或权限问题读取 `lark-shared`。保持已选身份，不为绕过权限失败而切换操作者。通过当前环境的技能目录或发现元数据按名称定位依赖，遵循当前环境的调用策略。依赖缺失时说明能力缺口，不拼接技能仓库中的分类路径。
+## Fix the operating identity
 
-## 创建与维护记录
+Perform all task reads, updates, comments, replies, and person lookups as the application bot. This requirement overrides the user-identity default and examples in helper skills. Do not inherit the CLI's selected identity or use the chat user's login.
 
-创建前检查同一来源或目标是否已有任务。
+Use the [bot-only wrapper](scripts/lark_bot.py) for these operations:
 
-- 将任务编号、标题、状态、负责人、优先级、最新进展保存在字段中。复用现有字段名称。
-- 将需求背景、完成条件、已有计划、依赖说明和交付链接写入任务详情。把计划中需要独立跟踪的子任务建在同一张表，互相附记录链接。
-- 将执行进展、失败重试、问题答复和决策依据写入记录评论。将已确认的当前结论同步到详情。
-- 更新详情前重新读取当前内容，合并他人的有效修改。仅提交本次变化的字段。
-- 仅在用户要求初始化时建表或补字段。沿用单表结构，执行过程用评论承载，变更过程使用飞书原生修改历史。
+```bash
+python3 <resolved-skill-directory>/scripts/lark_bot.py base +record-get --base-token <base-token> --table-id <table-id> --record-id <record-id>
+```
 
-## 更新任务状态
+The wrapper owns `--as bot` and `--format json`. Do not supply identity, format, output-file, or output-filter flags. Business input such as `--json` remains available. Read command help or schema with the CLI before choosing arguments. Local help and schema inspection do not perform task operations.
 
-沿用目标表的状态约定。初始化时采用以下流转：待处理、待执行、进行中、待评审、待验收、已完成。另设受阻和已取消。
+The wrapper supports the `base`, `drive`, and `contact` domains. It invokes the CLI once, checks the response identity, and preserves failure codes. It does not grant business authorization, confirm high-risk actions, retry writes, or change authentication. If a required operation is unsupported, record the capability gap instead of bypassing the wrapper. An unverified response does not prove a write failed; reconcile the remote state before retrying.
 
-- 开始实际执行时设为进行中，并评论说明本次工作。
-- 当前下一步无法推进时设为受阻。详情写明阻塞原因、解除条件、跟进人和解除后的恢复状态。
-- 收到答复或前置任务完成后，检查剩余阻塞。条件满足时恢复合适状态，评论说明依据。
-- 交付后转待评审或待验收。无需评审时直接转待验收。
-- 验收通过后设为已完成，并附结论和证据。代码合并本身不等于任务完成。
-- 评审或验收退回时设为进行中。取消或重开时评论说明原因，重开后按准备情况设为待处理或待执行。
+Use person identifiers from task fields or the project authority mapping. `contact +get-user` can verify a known identifier as the bot. Do not use user-only name search to resolve a person. If a bot-supported method cannot identify the responsible person, record that gap without switching identity.
 
-## 引用任务与维护阻塞
+On bot permission failure, preserve missing scopes or resource-access requirements for the appropriate administrator. Never fall back to `--as user`, run `auth login`, or change global CLI configuration to make the operation succeed. Do not print credentials. Respect the CLI's high-risk confirmation protocol, including exit code `10`; never add a confirmation flag automatically.
 
-在详情或评论中用“任务编号＋真实记录链接”引用任务。
+## Apply the existing authorization
 
-- 一般参考写为“相关任务”。父子任务互相链接。
-- 在受影响任务详情中写“被任务 #108 阻塞”，附前置记录链接。补充影响步骤、解除条件、跟进人和恢复状态。
-- 有多个阻塞时逐项维护。当前仍能推进的工作保持进行中，在详情标明后续受限制的步骤。
-- 建立依赖时检查相关记录，避免自依赖和循环等待。
-- 前置任务取消或重开时复核依赖，并在已知受影响任务中评论跟进。文本链接不会自动产生反向引用或传播状态。
+Read execution, task-update, comment, and mention permissions from the current request or standing project authorization. Record their source and scope. A configured table, bot access, or task assignment alone does not authorize every action. Do not reconfirm actions already covered by valid authorization.
 
-## 评论协作与提及负责人
+For a read-only assessment or status request, inspect and report without changing records, publishing comments, or starting implementation. Routine authorized execution choices belong to the agent. Workers return genuine blockers to the coordinator, who normally owns task writes and business questions.
 
-读取本任务的相关评论及回复。需要追溯历史讨论时，包含已解决评论。
+Resolve the decision-maker from the task or project authority mapping. Verify their stable identifier and authority for the specific decision. Do not assume the chat user or every task assignee can approve all decisions. A business reply does not replace account-holder authorization or a tool confirmation gate.
 
-将评论发布到对应任务记录。
+## Create and maintain records
 
-按 `lark-drive` 的现行协议提供已核实的表、记录和视图标识。多维表格没有全局评论，不能省略记录锚点。评论列表若包含其他记录，先按锚点筛选，并补齐相关评论和回复的分页。主代理默认统一写入共享状态和评论；子代理返回拟更新内容与证据，避免并发覆盖同一记录。
+Before creating a task, check for an existing record with the same source or goal. Read current fields and state options before updating. Reuse existing names and mappings.
 
-遇到需要人员确认的问题，在评论中写清问题、已有判断和需要的答复。使用飞书实际的人员提及功能通知负责人，普通姓名文本不能替代提及。
+- Keep the task number, title, state, assignee, priority, and latest progress in existing fields.
+- Keep the requirement, acceptance criteria, plan, dependencies, current decisions, and delivery links in task details.
+- Keep attempts, questions, replies, and supporting evidence in anchored record comments.
+- Re-read shared content before writing. Preserve others' valid changes and submit only the intended differences.
+- Create tables or fields only when initialization is authorized. Do not add a blocker schema merely to use this workflow.
 
-沿用原问题的评论讨论。需要等待才能继续时同步设为受阻。收到回复后判断问题是否解决，再更新详情和状态。
+Use the table's existing state mapping. A new setup can use pending, ready, in progress, blocked, in review, awaiting acceptance, done, and cancelled. Starting execution moves the task to in progress. Delivery moves it to review or acceptance. Mark done only after acceptance under the project's rule. A commit or merge alone is not acceptance.
 
-保留评论所在记录、评论标识和待答问题，供后续恢复。继续执行前读取答复与当前记录，避免重复发问。评论写入结果不明确时，先查找是否已发布，再决定是否重试。
+Return rejected review or acceptance work to in progress. Record the reason when cancelling or reopening a task. For a reopened task, select pending or ready according to its prerequisites. If a prerequisite is cancelled or reopened, recheck known dependent tasks and record the impact.
 
-## 按需查看修改历史
+Reference other records by task number and real record link. Check dependencies for self-reference and cycles. Inspect actual prerequisite records rather than trusting an old blocker label. Text links do not propagate state changes automatically.
 
-遇到状态冲突、任务重开、交接或依赖变化时，查看对应记录的相关修改历史。结合评论理解变更背景。信息仍不足且影响执行时，在任务评论中提及负责人确认。
+## Record a blocker and end the run
 
-完成飞书操作后，返回任务编号与链接、当前状态，以及需要跟进的问题。区分已写入的信息与未成功的操作。
+Complete independent authorized preparation before raising a question. Check the task's decisions and relevant comments first. Use a stable blocker key based on the task and unresolved decision. Reuse that key across retries and automation runs.
+
+Persist these facts in existing task details, with a durable project handoff as a fallback:
+
+- The blocker key, question, decision scope, and recommended answer.
+- The decision-maker's identifier and authority source.
+- Release conditions, prerequisite task links, and intended resume state.
+- Completed work, accessible evidence, and the next executable step.
+- Comment and reply identifiers, notification outcome, and unfinished remote updates.
+
+Use `pending`, `sent`, or `unknown` to distinguish notification outcomes. A timeout is not proof that nothing was sent. Shared task details and comments are the cross-run source; a machine-local temporary file cannot be the sole recovery record for another machine.
+
+Follow this sequence:
+
+1. Re-read the record and related discussion. Reconcile any unfinished write and reuse an existing question for the same blocker.
+2. Persist the blocker and recovery facts and set the configured blocked state. Save a durable local intent before remote writes when available.
+3. With valid comment and mention authorization, publish the question on the correct record and truly mention the responsible person. Include the blocker key, evidence, recommendation, and required decision. Do not substitute a plain-text name for a mention.
+4. Save the returned comment identifier and notification outcome. Re-read the record to verify the blocked state and handoff. Preserve any partial success or uncertain result accurately.
+5. End the current task run. Do not wait, listen, sleep, poll for a reply, or start another task in that run. The next existing automation invocation owns the next check.
+
+For Base comments, obtain the actual table, record, and comment-view identifiers required by `lark-drive`. Anchor the comment to that record. Filter returned comments to its anchor and complete relevant comment and reply pagination, including resolved discussions when recovering a decision.
+
+If a comment may have succeeded, find it by blocker key and record anchor before retrying. Check author and content; do not treat an unrelated comment as the question. If the state update or comment fails, preserve the successful parts and pending operations. Do not claim that notification or blocking succeeded without evidence.
+
+If bot access or missing communication authority prevents a remote handoff, save what can be preserved locally and report the unsent operation through an available channel. Do not switch to a user identity or broaden the notification audience. A missing decision-maker follows the configured escalation mapping; if none exists, record the unresolved target instead of guessing.
+
+## Check work on the next automation run
+
+An existing scheduled invocation can execute under standing authorization. This skill does not create a scheduler, listener, or background process. A status-only invocation remains read-only.
+
+1. First inspect durable shared handoffs and reconcile their referenced records regardless of current task state. If no shared handoff index exists, also inspect in-progress records within the authorized scope for unfinished blocker handoffs. Complete pagination. Then scan ready and blocked tasks in that scope. Repair uncertain writes or unsent notifications before selecting work.
+2. Start a ready task only with valid execution authority, a clear acceptance check, and satisfied prerequisites. Do not treat every visible record as assigned work.
+3. For a blocked task, read the original question and all relevant replies. A valid answer must address the current question and come from a person authorized for that decision. Check later corrections, revocations, and changes in responsibility.
+4. Recheck every release condition, permission, and prerequisite. A reply, reaction, acknowledgement, or the bot's own comment alone does not release the task.
+5. If all conditions hold, update the task to its appropriate resume state and continue the authorized work. Otherwise keep it blocked and skip it. Do not repeat the question or mention because another run occurred.
+
+A failed notification may be completed after reconciliation when access and authority become available. End that task run after the completed handoff. An already delivered unanswered question stays untouched. A materially new decision may use a new blocker key. Do not invent reminder schedules.
+
+Before resuming, inspect relevant native record history when state conflicts, cancellations, reopened tasks, or ownership changes affect the decision. Do not resume cancelled work or revoked authorization.
+
+## Report the actual outcome
+
+Return the task number, real record link, verified state, completed work, evidence, and unresolved questions. Distinguish successful remote updates from pending or uncertain operations. Include the bot identity and returned operation identifiers when available. Keep local evidence paths separate from artifacts actually accessible to collaborators.

@@ -22,6 +22,16 @@ Work in the actual project identified by the request and active context. Keep it
 
 Follow the user's language and scope, project instructions, and higher-priority rules. Keep existing tool restrictions and authorization boundaries. Apply this skill to the active task. Do not claim persistent activation or carry an old task into a clearly new request.
 
+## Default autonomy
+
+Complete authorized investigation, design, implementation, verification, and repairs without asking whether to proceed. Make routine reversible decisions and explain them with the result. Apply this rule from the start; it does not depend on a separate invocation of `principle-never-block-on-the-human`.
+
+Give workers decision authority, retry limits, and escalation conditions in their briefs. Workers resolve ordinary implementation questions themselves. They return genuine blockers to the coordinator instead of asking the user for permission to continue. The coordinator replaces failed workers within existing limits without seeking routine confirmation. Preserve required design gates and explicit resource limits.
+
+For a decision that needs a person, use the configured Feishu task discussion and the responsible decision-maker. Follow [Feishu tasks](playbooks/issues.md) and `lark-issue-tracker`. After recording the question, blocked state, and handoff, end the current task run. Do not wait for a reply. The next authorized automation run checks whether execution can resume.
+
+Autonomy preserves the requested deliverable and existing authority. Advice, planning, and review remain within their scope. Use existing authorization for task updates, comments, and mentions. A task link alone does not grant that authorization. Report inaccessible task discussions or missing account-holder approval through the available channel after preserving the handoff. Do not turn a business reply into approval for unrelated actions or bypass a tool's confirmation gate.
+
 ## Playbooks
 
 | Task | Read |

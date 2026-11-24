@@ -1,12 +1,14 @@
 ---
 name: arena
-description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
+description: "Delegate the same task to independent candidate subagents, pick a base, and graft the strongest parts of the other candidates into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
 disable-model-invocation: true
 ---
 
 # Arena
 
-Open a todolist with one entry per phase (Frame, Fan out, Cross-judge, Pick, Graft, Verify) before launching anything.
+The current agent coordinates the run and delegates through the environment's available subagent tools using environment defaults. If independent subagents are unavailable, report that limitation and stop; drafts written in the coordinator's own conversation do not count as independent candidates.
+
+Track one entry per phase (Frame, Fan out, Cross-judge, Pick, Graft, Verify) with the available task-list tool or a written checklist before launching anything.
 
 ## Phase A: Frame
 
@@ -14,18 +16,18 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners from the `arena runners` line in `~/.cursor/rules/pstack-models.mdc`, by default `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, and `gemini-4-neon-xhigh`. An `auto` or `inherit-parent` entry is the parent model, so omit `model` and spawn `generalPurpose`. If the Task tool rejects a slug, use the nearest valid slug of the same family or drop the seat, keep at least two runners, and say so. Families go by prefix, and the longest match wins: `claude-fable-*`, `claude-*`, and `gemini-*`, after dropping a leading `cursor-`. Any other slug's family is its text before the first hyphen. Spawn more for multiple design directions, and repeat one model when the work is generation-bound, not judgment-sensitive. Pick each subagent's reasoning level per the Subagents section of the **poteto-mode** skill.
-4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
+3. Plan at least two independent candidate subagents. Add more when the task warrants exploring more design directions.
+4. Give each candidate its own output location (an isolated git worktree for code where possible, otherwise a separate directory under an available workspace or system temporary directory), per the **separate-before-serializing-shared-state** principle skill.
 
 ## Phase B: Fan out
 
-Spawn all N subagents in one message with `run_in_background: true`, each with the task, the path to the shared grounding, its own output path, and instructions to produce the artifact and a short rationale naming the alternatives it considered and what it rejected.
+Create the candidate subagents through the available delegation tools. Run them concurrently within the environment's concurrency limit, in batches when needed, or sequentially in independent subagent conversations when parallel execution is unavailable. Give each the same task and shared grounding, its own output path, and instructions to produce the artifact and a short rationale naming the alternatives it considered and what it rejected. Each candidate produces its first artifact without reading the other candidates' outputs.
 
-If a candidate produces no output, proceed with N-1 and note the dropout.
+Replace failed candidates when possible and note any dropouts. Proceed to comparison only with at least two complete candidate artifacts. If that minimum cannot be reached, report the run as incomplete and stop before picking or synthesizing a base.
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, spawn one readonly judge from the `arena cross-judge pool` line in `~/.cursor/rules/pstack-models.mdc`, by default `claude-opus-5-5-high-fast`, `gemini-4-neon-xhigh`. The judge is never from the parent's vendor, and Fable counts as Claude for that check, so use the first entry from another vendor. An `auto` or `inherit-parent` entry is the parent model. If you do not know the parent's model, use the first real slug and say that the vendor check did not run. If the Task tool rejects a slug, use the nearest valid slug of the same family, then the next such entry, or skip the judge, and say so. While you read in Phase D, the judge scores each candidate, by path label, on each rubric criterion and recommends a base.
+After Phase B finishes, create a separate judge subagent with a fresh conversation, the rubric, and all completed candidate artifacts. Give it read-only access to those artifacts using the available controls or explicit instructions. While you read in Phase D, the judge scores each candidate, by path label, on each rubric criterion and recommends a base. If a separate judge cannot be created or returns no usable review, record why Phase C skipped the judge and continue with the coordinator's scoring in Phase D.
 
 ## Phase D: Pick a base
 
@@ -45,4 +47,4 @@ Verify the synthesized artifact like any other output, per the **prove-it-works*
 
 ## Outputs
 
-One synthesized artifact, with a short synthesis note alongside naming the base and why, the cross-judge's verdict or that Phase C skipped the judge, each graft with its source candidate, what was rejected and why, any convergence or dropouts, and the verification result.
+One synthesized artifact, with a short synthesis note alongside naming the base and why, whether candidates ran concurrently, in batches, or sequentially, the cross-judge's verdict or why Phase C skipped the judge, each graft with its source candidate, what was rejected and why, any convergence or dropouts, and the verification result. If the run stopped before synthesis, report the incomplete outcome, the completed candidates, and the limitation instead.

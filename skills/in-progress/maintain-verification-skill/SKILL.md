@@ -22,7 +22,7 @@ Only edit the verification skill's own directory (its SKILL.md, features/, and a
 
 ## Pass
 
-0. **Locate the target.** Find the verification skill to maintain: the project-local skill whose body has launch/drive sections and a feature map (usually `.cursor/skills/verify-*/`). Several candidates → ask which one; none → stop and point at `/create-verification-skill` instead of inventing a target.
+0. **Locate the target.** Identify the current project's skill directories recognized by the current agent, using project instructions, existing discoverable skills, and the agent's supported discovery rules. Search those directories for the project-local skill whose body has launch/drive sections and a feature map; select by behavior rather than a fixed tool-specific path or skill name. Use the target the user named when it matches, and record its concrete project-relative path for the rest of the pass. Several candidates without a clear target → ask which one; none → stop and point at `/create-verification-skill` instead of inventing a target.
 
 1. **Index hygiene.** Read the feature map README and glob its sibling files. Fix missing, extra, duplicate, or dead entries. Lightweight; no generated inventory.
 

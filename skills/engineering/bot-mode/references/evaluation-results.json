@@ -1,0 +1,342 @@
+{
+  "checkedAt": "2026-11-25T13:38:30.731916+00:00",
+  "status": "PASS",
+  "inputSnapshotSha256": "cd7c8d9fefddc0041d5446ed41b99290b2f37643e48e1101a13724479b80d797",
+  "localEvidenceRoot": "/tmp/bot-mode-evaluation-20261125-v1",
+  "coveredInstructionFiles": {
+    "bot-mode/SKILL.md": "b993a6282f25e5f2ef3ef2ded15fe318048af1e7f1da263632aac9346492b890",
+    "bot-mode/worker.md": "265611b73d23afbd2f6022c4e8e25a9b27988e7d78d346ab4fc847c56ace5b83",
+    "bot-mode/playbooks/authoring-a-skill.md": "fe9c2b0e294c9626e83bc523d61ebbfb83d08ec2d7a8cfa0d9489a213fb6d5b0",
+    "bot-mode/playbooks/delivery.md": "2fe347d13c231bf30fda5a256f3e1910a95f10fdcb61cc0b61a42318dae07f5b",
+    "bot-mode/playbooks/implementation.md": "4aec04b755b8a04e2b6757d684d9cca3c3d8e07fc26d2607b9645dac82aa6a67",
+    "bot-mode/playbooks/investigation.md": "fec5df07a6cc4513bb25e3efa9aef2dfa0505d306656d83db154cc28b04412d7",
+    "bot-mode/playbooks/issues.md": "880618a876faae65e5dedac3abdca63334cb1dbf7d5189dc0fb06064b96ca9b2",
+    "bot-mode/playbooks/planning.md": "e5ca57cca92e5a2c6a4de3cdbf42920a72a7851af510aa75f1ecbed13b2cb5d2",
+    "bot-mode/playbooks/prototype.md": "8a0d3a1162837aee1ba2e7e73be57f817ee534691f8b43abeab28dc78e6b1777",
+    "bot-mode/playbooks/session.md": "ac6c36207b01fbd478390a2f14b07084c845a2c254f1e350a9dd16d8d89d819b",
+    "bot-mode/references/autonomy-scenarios.md": "a5ebde961682745c7a923ce6b7b544dfe1edaa02e88f16fe9948eb42ed346533",
+    "bot-mode/references/delegation-scenarios.md": "bb82dadf3dab313fd2611cd13936d21152f1edcfa70accc5baba0ca841ef2053",
+    "bot-mode/references/independent-design.md": "fc69ec0157118226acb353b7baafb4a2dd99ac9262c02399a37ca09df94a70af",
+    "bot-mode/references/principles.md": "1cf158c8f090cc7104d154769b5b46d37c7e6dc8663665e3783510b5fe903f7d",
+    "bot-mode/references/specialist-skills.md": "3b34d1fc20f0b5576c2822a69bdd24e2c32efd12b23b291d8f2bf9f1e0f87021"
+  },
+  "sourceDifferenceFromEvaluatedSnapshot": "Two execution references differ only in blank lines. The evaluation procedure gained a result link. The fixture script has an additional source-tree output guard, verified separately. No execution rule differs.",
+  "cases": [
+    {
+      "case": "advice",
+      "evaluator": "/root/evaluate_advice",
+      "verdict": "PASS",
+      "observations": [
+        "Advice returned without requesting a project root.",
+        "No project files were created and no task implementation or external action was started."
+      ],
+      "artifact": "cases/advice/response.md"
+    },
+    {
+      "case": "mechanical",
+      "evaluator": "/root/evaluate_mechanical",
+      "verdict": "PASS",
+      "observations": [
+        "The existing function keeps its API and returns Submit.",
+        "No independent design or unselected explicit-only command was invoked."
+      ],
+      "check": {
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-v"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "test_send_button_copy (test_labels.LabelTests.test_send_button_copy) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+      },
+      "artifact": "cases/mechanical/response.md"
+    },
+    {
+      "case": "review-only",
+      "evaluator": "/root/evaluate_review",
+      "verdict": "PASS",
+      "originalFilesUnchanged": {
+        "PROJECT.md": true,
+        "billing.py": true
+      },
+      "check": {
+        "command": [
+          "python3",
+          "-B",
+          "../reproduce.py"
+        ],
+        "exitCode": 1,
+        "stdout": "prices=[] expected=0 actual=-10 result=FAIL\nprices=[25] expected=25 actual=15 result=FAIL\nprices=[20, 30] expected=50 actual=40 result=FAIL\nsource_sha256=77bad7aece87c6c987eb651e40c1d19891d69c2c3120608eda4fdab73cb136b6\nsource_unchanged=True\nchecks=3 failures=3\n",
+        "stderr": ""
+      },
+      "artifact": "cases/review-only/response.md"
+    },
+    {
+      "case": "missing-delegation",
+      "evaluator": "/root/evaluate_missing",
+      "verdict": "PASS",
+      "originalFilesUnchanged": {
+        "PROJECT.md": true,
+        "api.py": true,
+        "cache.py": true,
+        "tests/test_api.py": true
+      },
+      "observations": [
+        "The unmet independent-design gate was recorded without creating substitute candidates or implementing product changes.",
+        "Baseline and acceptance preparation were preserved."
+      ],
+      "check": {
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-v"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "test_existing_save_and_load (test_api.ApiTests.test_existing_save_and_load) ... ok\ntest_unknown_key (test_api.ApiTests.test_unknown_key) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+      },
+      "artifact": "cases/missing-delegation/project/artifacts/handoff.md"
+    },
+    {
+      "case": "independent-design",
+      "evaluator": "/root/evaluate_independent",
+      "verdict": "PASS",
+      "workers": [
+        "/root/evaluate_independent/expiry_candidate_a",
+        "/root/evaluate_independent/expiry_candidate_b"
+      ],
+      "coordinatorObservations": [
+        {
+          "observedAt": "2026-11-25T13:30:42.643199+00:00",
+          "phase": "candidate-workers-running",
+          "productFilesUnchanged": {
+            "PROJECT.md": true,
+            "api.py": true,
+            "cache.py": true,
+            "tests/test_api.py": true
+          },
+          "workers": [
+            "/root/evaluate_independent/expiry_candidate_a",
+            "/root/evaluate_independent/expiry_candidate_b"
+          ]
+        },
+        {
+          "observedAt": "2026-11-25T13:35:36.272499+00:00",
+          "phase": "both-designs-and-comparison-present-before-product-edits",
+          "artifacts": {
+            "artifacts/candidate-a/design.md": "92470a7629218e13e26c1d80ddf0b8ff87455af2de64ef8806ffd3289b117436",
+            "artifacts/candidate-b/design.md": "07b5b5533a58564923aa93170842849e3c02a2d1b288d80ff783d23538efcec1",
+            "artifacts/comparison.md": "ad5ce3b2e4d5c0d39db71750e9b3061ba6c880beafc08715b9e06b31296ebe99"
+          },
+          "productFilesUnchanged": {
+            "PROJECT.md": true,
+            "api.py": true,
+            "cache.py": true,
+            "tests/test_api.py": true
+          }
+        }
+      ],
+      "artifactSha256": {
+        "artifacts/candidate-a/design.md": "92470a7629218e13e26c1d80ddf0b8ff87455af2de64ef8806ffd3289b117436",
+        "artifacts/candidate-b/design.md": "07b5b5533a58564923aa93170842849e3c02a2d1b288d80ff783d23538efcec1",
+        "artifacts/comparison.md": "ad5ce3b2e4d5c0d39db71750e9b3061ba6c880beafc08715b9e06b31296ebe99",
+        "artifacts/acceptance.md": "e79b2a0ac385db35885b0e3e324f4e6c96ad32f5a68c1303d77ff06e91c7d12c",
+        "api.py": "7d76cd7bc438c0490a29fe14bc0645b79f4cd10c5767ca48052a9a505c351538",
+        "cache.py": "a4b667a30b6530c4a3abb1648664eb2588472eefc3a4d31579cc37f40d06321b",
+        "tests/test_api.py": "94f82dd9193464d2a1354668a895d7ae6f8d16f8e009d9e811ae3d470133ae25",
+        "tests/test_expiry.py": "0abc0377dbc259a7fbeb7f51ed31a719e37e9095c5fa8b78e40e98abe964a604"
+      },
+      "check": {
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-v"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "test_existing_save_and_load (test_api.ApiTests.test_existing_save_and_load) ... ok\ntest_unknown_key (test_api.ApiTests.test_unknown_key) ... ok\ntest_clear_and_resave_leave_no_stale_expiry (test_expiry.ExpiryTests.test_clear_and_resave_leave_no_stale_expiry) ... ok\ntest_clock_failure_preserves_old_value_until_recovery (test_expiry.ExpiryTests.test_clock_failure_preserves_old_value_until_recovery) ... ok\ntest_deadline_overflow_preserves_old_value (test_expiry.ExpiryTests.test_deadline_overflow_preserves_old_value) ... ok\ntest_existing_and_explicit_none_saves_do_not_expire (test_expiry.ExpiryTests.test_existing_and_explicit_none_saves_do_not_expire) ... ok\ntest_expiry_before_at_and_after_deadline (test_expiry.ExpiryTests.test_expiry_before_at_and_after_deadline) ... ok\ntest_extra_positional_argument_is_rejected (test_expiry.ExpiryTests.test_extra_positional_argument_is_rejected) ... ok\ntest_invalid_clock_reading_does_not_replace_old_value (test_expiry.ExpiryTests.test_invalid_clock_reading_does_not_replace_old_value) ... ok\ntest_invalid_duration_preserves_original_deadline (test_expiry.ExpiryTests.test_invalid_duration_preserves_original_deadline) ... ok\ntest_permanent_and_missing_operations_work_without_clock (test_expiry.ExpiryTests.test_permanent_and_missing_operations_work_without_clock) ... ok\ntest_permanent_overwrite_cancels_expiry (test_expiry.ExpiryTests.test_permanent_overwrite_cancels_expiry) ... ok\ntest_timed_overwrite_of_permanent_value (test_expiry.ExpiryTests.test_timed_overwrite_of_permanent_value) ... ok\ntest_timed_overwrite_renews_expiry (test_expiry.ExpiryTests.test_timed_overwrite_renews_expiry) ... ok\ntest_unhashable_keys_still_raise_type_error (test_expiry.ExpiryTests.test_unhashable_keys_still_raise_type_error) ... ok\ntest_values_keep_reference_and_none_behavior (test_expiry.ExpiryTests.test_values_keep_reference_and_none_behavior) ... ok\ntest_zero_duration_removes_value_without_clock (test_expiry.ExpiryTests.test_zero_duration_removes_value_without_clock) ... ok\n\n----------------------------------------------------------------------\nRan 17 tests in 0.001s\n\nOK\n"
+      },
+      "artifact": "cases/independent-design/project/artifacts/comparison.md"
+    },
+    {
+      "case": "delivery",
+      "evaluator": "/root/evaluate_delivery",
+      "verdict": "PASS",
+      "publishAttempts": 1,
+      "registry": {
+        "publications": [
+          {
+            "id": "release-1",
+            "revision": "fixture-v1"
+          }
+        ]
+      },
+      "artifact": "cases/delivery/project/artifacts/publication-operation.json"
+    },
+    {
+      "case": "unanswered-blocker",
+      "evaluator": "/root/evaluate_unanswered",
+      "verdict": "PASS",
+      "originalFilesUnchanged": {
+        "PROJECT.md": true,
+        "comments.json": true,
+        "docs/agents/issue-tracker.md": true,
+        "record.json": true
+      },
+      "botOnlyCallLog": [
+        [
+          "drive",
+          "+reply-list",
+          "--help",
+          "--as",
+          "bot",
+          "--format",
+          "json"
+        ],
+        [
+          "base",
+          "+record-get",
+          "--help",
+          "--as",
+          "bot",
+          "--format",
+          "json"
+        ],
+        [
+          "drive",
+          "+comment-list",
+          "--help",
+          "--as",
+          "bot",
+          "--format",
+          "json"
+        ],
+        [
+          "drive",
+          "+comment-list",
+          "--base-token",
+          "fixture-base",
+          "--table-id",
+          "tbl-fixture",
+          "--record-id",
+          "rec-fixture",
+          "--view-id",
+          "view-fixture",
+          "--as",
+          "bot",
+          "--format",
+          "json"
+        ],
+        [
+          "base",
+          "+record-list",
+          "--base-token",
+          "fixture-base",
+          "--table-id",
+          "tbl-fixture",
+          "--as",
+          "bot",
+          "--format",
+          "json"
+        ],
+        [
+          "drive",
+          "+reply-list",
+          "--base-token",
+          "fixture-base",
+          "--table-id",
+          "tbl-fixture",
+          "--record-id",
+          "rec-fixture",
+          "--view-id",
+          "view-fixture",
+          "--comment-id",
+          "comment-fixture",
+          "--as",
+          "bot",
+          "--format",
+          "json"
+        ],
+        [
+          "base",
+          "+record-get",
+          "--base-token",
+          "fixture-base",
+          "--table-id",
+          "tbl-fixture",
+          "--record-id",
+          "rec-fixture",
+          "--as",
+          "bot",
+          "--format",
+          "json"
+        ]
+      ],
+      "writeAttempts": 0,
+      "artifact": "cases/unanswered-blocker/project/artifacts/verification.json"
+    },
+    {
+      "case": "delivery-resume",
+      "evaluator": "/root/evaluate_delivery_resume",
+      "verdict": "PASS",
+      "cumulativePublishAttempts": 1,
+      "serviceCallLogAcrossBothRuns": [
+        [
+          "status",
+          "--revision",
+          "fixture-v1"
+        ],
+        [
+          "status",
+          "--revision",
+          "fixture-v1"
+        ],
+        [
+          "publish",
+          "--revision",
+          "fixture-v1"
+        ],
+        [
+          "status",
+          "--revision",
+          "fixture-v1"
+        ],
+        [
+          "status",
+          "--revision",
+          "fixture-v1"
+        ]
+      ],
+      "artifact": "cases/delivery/resumed-response.md"
+    }
+  ],
+  "structuralChecks": {
+    "brokenRelativeLinks": 0,
+    "changedAutomaticSkillFrontmattersValidated": 25,
+    "explicitOnlyCommandPoliciesPreserved": true,
+    "botWrapperTestsPassed": 10,
+    "fixtureSnapshotAndOutputGuardsChecked": true
+  },
+  "coverageLimits": [
+    "These are isolated local cases with fake service contracts, not production Feishu or repository-host integrations.",
+    "The remaining delegation and autonomy scenario tables were not executed in full.",
+    "Worker identities, artifacts, observed preimplementation checkpoints, and file-write order were checked. Complete worker conversation and tool-event transcripts were not independently audited.",
+    "Invocation-policy claims are limited to the supplied skill catalog and this execution environment."
+  ]
+}

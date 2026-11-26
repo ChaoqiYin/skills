@@ -1,7 +1,6 @@
 ---
 name: lark-issue-tracker
 description: Manage requirements and issues in Feishu Base. Use when creating or updating task records, tracking status and dependencies, discussing blockers through comments, or resuming work from task history.
-disable-model-invocation: true
 ---
 
 # Manage Feishu task records

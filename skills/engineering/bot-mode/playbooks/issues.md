@@ -44,7 +44,7 @@ Publish requested delivery links and verification evidence. Move to the configur
 
 Keep PR discussion, CI, and merge operations on the repository host through [Delivery](delivery.md). Link those artifacts from the Feishu task.
 
-For long work, `show-me-your-work` owns the canonical local trail. If publication is requested, let that skill render a review copy in record comments. Local evidence paths become accessible to collaborators only through an authorized upload or another shared location.
+Keep task progress and evidence in the existing record fields, details, and comments. If the user selects `show-me-your-work`, follow that command for its canonical local trail and any authorized review copy. Local evidence paths become accessible to collaborators only through an authorized upload or another shared location.
 
 ## 6. Reconcile and hand back
 
